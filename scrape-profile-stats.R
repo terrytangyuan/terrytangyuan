@@ -1,5 +1,4 @@
-library("rvest")
-library('xml2')
+library(rvest)
 
 gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 citations <- read_html(gscholar_link) %>%
