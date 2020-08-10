@@ -24,7 +24,11 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
         restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-    - name: Install dependencies
+    - name: Install system dependencies
+      run: |
+        sudo apt-get install libcurl4-openssl-dev
+
+    - name: Install R package dependencies
       run: |
         if (!require('remotes')) install.packages('remotes')
         if (!require('rvest')) remotes::install_github('tidyverse/rvest')
