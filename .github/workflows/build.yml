@@ -18,7 +18,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        Rscript -e "if (!require('rvest')) install.packages('rvest', dependencies=TRUE)"
+        Rscript -e "if (!require('rvest')) install.packages(c('httr', 'rvest'), dependencies=TRUE)"
 
     - name: Fetch stats and update README.md
       run: |
