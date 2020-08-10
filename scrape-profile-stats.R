@@ -12,6 +12,6 @@ citations <- read_html(gscholar_link) %>%
 readme_txt <- readLines(readme_loc)
 readme_txt <- gsub(
   "Scholar-\\d?k?-_.svg",
-  sprintf("Scholar-%sk-_.svg", floor(citations / 1000)),
+  sprintf("Scholar-%sk-_.svg", round(citations / 1000, digits = 1)),
   readme_txt)
 writeLines(readme_txt, con = readme_loc)
