@@ -15,10 +15,20 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: r-lib/actions/setup-r@master
+    - uses: r-lib/actions/setup-pandoc@master
+
+    - name: Cache R packages
+      uses: actions/cache@v1
+      with:
+        path: ${{ env.R_LIBS_USER }}
+        key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+        restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
     - name: Install dependencies
       run: |
-        Rscript -e "if (!require('rvest')) install.packages(c('httr', 'rvest'), dependencies=TRUE)"
+        if (!require('remotes')) install.packages('remotes')
+        if (!require('rvest')) remotes::install_github('tidyverse/rvest')
+      shell: Rscript {0}
 
     - name: Fetch stats and update README.md
       run: |
