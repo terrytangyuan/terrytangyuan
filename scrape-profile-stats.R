@@ -13,6 +13,7 @@ sponsors_num <- jsonlite::fromJSON(rawToChar(curl::curl_fetch_memory("https://sp
 
 # Download images in advance so we don't rely on img.shields.io at rendering time.
 imgs <- list(
+  cv = "https://img.shields.io/badge/CV--_.svg?style=social&logo=giphy",
   github = "https://img.shields.io/github/followers/terrytangyuan.svg?label=GitHub&style=social",
   twitter = "https://img.shields.io/twitter/follow/TerryTangYuan?label=Twitter&style=social",
   linkedin = "https://img.shields.io/badge/LinkedIn--_.svg?style=social&logo=linkedin",
