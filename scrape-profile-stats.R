@@ -9,15 +9,13 @@ citations <- read_html(gscholar_link) %>%
   html_table() %>%
   .[1, "All"]
 
-sponsors_num <- jsonlite::fromJSON(rawToChar(curl::curl_fetch_memory("https://sponsors.trnck.dev/terrytangyuan/count")$content))$sponsors$count
-
 # Download images in advance so we don't rely on img.shields.io at rendering time.
 imgs <- list(
   cv = "https://img.shields.io/badge/CV--_.svg?style=social&logo=giphy",
   github = "https://img.shields.io/github/followers/terrytangyuan.svg?label=GitHub&style=social",
   twitter = "https://img.shields.io/twitter/follow/TerryTangYuan?label=Twitter&style=social",
   linkedin = "https://img.shields.io/badge/LinkedIn--_.svg?style=social&logo=linkedin",
-  sponsors = sprintf("https://img.shields.io/badge/Sponsors-%s-_.svg?style=social&logo=github&logoColor=EA4AAA", sponsors_num),
+  sponsors = sprintf("https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA"),
   citations = sprintf("https://img.shields.io/badge/Citations-%sk-_.svg?style=social&logo=google-scholar", round(citations / 1000, digits = 1)),
   zhihu = sprintf("https://img.shields.io/badge/%s--_.svg?style=social&logo=zhihu", URLencode("知乎", reserved = TRUE)),
   weibo = sprintf("https://img.shields.io/badge/%s--_.svg?style=social&logo=sina-weibo", URLencode("微博", reserved = TRUE))
