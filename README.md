@@ -8,3 +8,7 @@
 	<a href="https://www.zhihu.com/people/terrytangyuan"><img src="imgs/zhihu.svg" alt="知乎"></a>
 	<a href="https://weibo.com/5681818134"><img src="imgs/weibo.svg" alt="微博"></a>
 </p>
+
+<p align="center">👉 Check out what I've been working on 
+	<a href="https://github.com/sponsors/terrytangyuan">here</a> and follow me <a href="https://twitter.com/TerryTangYuan">on Twitter</a> for updates! 🛠️ ✍️ ☕ 🚀
+</p>
