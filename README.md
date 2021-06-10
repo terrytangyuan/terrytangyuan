@@ -10,5 +10,8 @@
 </p>
 
 <p align="center">👉 Check out what I've been working on 
-	<a href="https://github.com/sponsors/terrytangyuan">here</a> and follow me <a href="https://twitter.com/TerryTangYuan">on Twitter</a> for updates! 🛠️ ✍️ ☕ 🚀
+	<a href="https://github.com/sponsors/terrytangyuan">here</a> and follow me <a href="https://twitter.com/TerryTangYuan">on Twitter</a> for updates! 🛠️ 
+</p>
+<p align="center">🔥 Check out my new book 
+	<a href="https://bit.ly/2RKv8Zo">Distributed Machine Learning Patterns</a> from Manning Publications!
 </p>
