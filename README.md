@@ -6,6 +6,7 @@
 	<a href="https://terrytangyuan.github.io/cv.html"><img src="imgs/cv.svg" alt="Curriculum Vitae"></a>
 	<a href="https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"><img src="imgs/citations.svg" alt="Citations"></a>
 	<a href="https://www.zhihu.com/people/terrytangyuan"><img src="imgs/zhihu.svg" alt="知乎"></a>
+	<a href="imgs/wechat-qr-code.png"><img src="imgs/wechat.svg" alt="微信"></a>
 	<a href="https://weibo.com/5681818134"><img src="imgs/weibo.svg" alt="微博"></a>
 </p>
 
