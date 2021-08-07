@@ -33,8 +33,7 @@ jobs:
 
     - name: Install R package dependencies
       run: |
-        if (!require('remotes')) install.packages('remotes')
-        if (!require('rvest')) remotes::install_github('tidyverse/rvest')
+        if (!require('rvest')) install.packages('rvest')
       shell: Rscript {0}
 
     - name: Fetch stats and update README.md
