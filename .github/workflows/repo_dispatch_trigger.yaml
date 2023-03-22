@@ -13,4 +13,4 @@ jobs:
         with:
           repository: terrytangyuan/terrytangyuan
           event-type: my-event
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "target_img": "img", "target_branch": "branch"}'
