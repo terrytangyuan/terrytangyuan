@@ -1,0 +1,16 @@
+name: Repo Dispatch Trigger
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    name: Trigger on ${{ github.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          repository: terrytangyuan/terrytangyuan
+          event-type: my-event
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
