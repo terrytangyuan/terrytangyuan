@@ -12,6 +12,7 @@ jobs:
         run: |
           curl -X POST https://api.github.com/repos/terrytangyuan/terrytangyuan/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
+          -H "authorization: Bearer ${{ secrets.ACTIONS_KEY }}" \
           --data '{"event_type": "my-event", "client_payload": {"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "target_img": "img", "target_branch": "branch"}}'
       # - name: Repository Dispatch
       #   uses: peter-evans/repository-dispatch@v2
