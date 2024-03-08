@@ -13,7 +13,6 @@
 
 Yuan is a principal software engineer at [Red Hat](https://www.redhat.com/), working on [OpenShift AI](https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai). Previously, he has led teams to build AI infrastructure and platforms at various companies, including [Alibaba](https://www.alibabagroup.com/) and [Akuity](https://akuity.io/). He's a project lead of [Argo](https://argoproj.github.io/) and [Kubeflow](https://github.com/kubeflow), a maintainer of [TensorFlow](https://github.com/tensorflow/tensorflow) and [XGBoost](https://github.com/dmlc/xgboost), and an author of many popular [open source projects](https://github.com/sponsors/terrytangyuan). In addition, Yuan [authored](https://terrytangyuan.github.io/cv#publications) three machine learning books and published numerous impactful papers. He's a regular [conference speaker](https://terrytangyuan.github.io/cv#talks), technical advisor, leader, and mentor at [various organizations](https://terrytangyuan.github.io/cv#services). 
 
-<p align="center">👉 Check out
+<p align="center">📖 Check out
 	<a href="https://github.com/sponsors/terrytangyuan">what he's working on</a> and the <a href="https://github.com/terrytangyuan/distributed-ml-patterns">Distributed Machine Learning Patterns</a> book!
 </p>
-<p align="center">🔔 <a href="https://calendly.com/chat-with-terry/">Schedule a time</a> to discuss open source and collaboration opportunities.</p>
