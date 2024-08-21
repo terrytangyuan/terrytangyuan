@@ -13,8 +13,8 @@ citations <- read_html(gscholar_link) %>%
 imgs <- list(
   cv = "https://img.shields.io/badge/Curriculum%20Vitae--_.svg?style=social&logo=giphy",
   github = "https://img.shields.io/github/followers/terrytangyuan.svg?label=GitHub&style=social",
-  twitter = "https://img.shields.io/badge/X-9.1k-_.svg?style=social&logo=x",
-  linkedin = "https://img.shields.io/badge/LinkedIn-6.8k-_.svg?style=social&logo=linkedin",
+  twitter = "https://img.shields.io/badge/X-9k-_.svg?style=social&logo=x",
+  linkedin = "https://img.shields.io/badge/LinkedIn-7k-_.svg?style=social&logo=linkedin",
   mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
   sponsors = sprintf("https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA"),
   citations = sprintf("https://img.shields.io/badge/Citations-%sk-_.svg?style=social&logo=google-scholar", round(citations / 1000, digits = 1)),
