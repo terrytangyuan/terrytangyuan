@@ -16,7 +16,7 @@ imgs <- list(
   twitter = "https://img.shields.io/badge/X-9.1k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-8.3k-_.svg?style=social&logo=linkedin",
   mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
-  bluesky = "https://img.shields.io/badge/Bluesky-251-_.svg?style=social&logo=bluesky",
+  bluesky = "https://img.shields.io/badge/Bluesky-308-_.svg?style=social&logo=bluesky",
   sponsors = sprintf("https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA"),
   citations = sprintf("https://img.shields.io/badge/Citations-%sk-_.svg?style=social&logo=google-scholar", round(citations / 1000, digits = 1)),
   wechat = sprintf("https://img.shields.io/badge/%s--_.svg?style=social&logo=wechat", URLencode("WeChat", reserved = TRUE))
