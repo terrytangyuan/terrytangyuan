@@ -14,7 +14,7 @@ imgs <- list(
   cv = "https://img.shields.io/badge/Curriculum%20Vitae--_.svg?style=social&logo=giphy",
   github = "https://img.shields.io/github/followers/terrytangyuan.svg?label=GitHub&style=social",
   twitter = "https://img.shields.io/badge/X-9.1k-_.svg?style=social&logo=x",
-  linkedin = "https://img.shields.io/badge/LinkedIn-8.3k-_.svg?style=social&logo=linkedin",
+  linkedin = "https://img.shields.io/badge/LinkedIn-8.4k-_.svg?style=social&logo=linkedin",
   mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
   bluesky = "https://img.shields.io/badge/Bluesky-1.1k-_.svg?style=social&logo=bluesky",
   sponsors = sprintf("https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA"),
