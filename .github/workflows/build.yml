@@ -24,6 +24,9 @@ jobs:
         cache: 'pip'
     - run: pip install atproto
     - run: python scrape_bluesky_stats.py
+      env:
+        BLUESKY_APP_HANDLE: ${{ secrets.BLUESKY_APP_HANDLE }}
+        BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
 
     - name: Cache R packages
       uses: actions/cache@v4

@@ -1,9 +1,9 @@
 from atproto import Client
 from decimal import *
 import requests
+import os
 
 def human_format(num):
-    # set decimal default options!
     getcontext().prec = 1
     getcontext().rounding = ROUND_DOWN
 
@@ -16,10 +16,11 @@ def human_format(num):
     num = int(num * 10) / 10
     return f"{f'{num:f}'.rstrip('0').rstrip('.')}{['', 'k', 'M', 'B', 'T'][magnitude]}"
 
-handle = 'terrytangyuan.xyz'
-password = 'b5he-u6re-vyql-cd2h'
+# Make sure these environment variables are available in your Github repo secrets
+handle = os.environ['BLUESKY_APP_HANDLE']
+app_password = os.environ['BLUESKY_APP_PASSWORD']
 client = Client()
-client.login(handle, password)
+client.login(handle, app_password)
 data = client.get_profile(actor=handle)
 followers_count = human_format(int(data.followers_count))
 image_url = 'https://img.shields.io/badge/Bluesky-%s-_.svg?style=social&logo=bluesky' % followers_count
