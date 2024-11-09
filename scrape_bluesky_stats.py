@@ -6,7 +6,7 @@ import os
 
 def human_format(num):
     getcontext().prec = 1
-    getcontext().rounding = ROUND_DOWN
+    getcontext().rounding = ROUND_CEILING
     _num = Decimal(num)
     num = float(f"{_num:.3g}")
     magnitude = 0
