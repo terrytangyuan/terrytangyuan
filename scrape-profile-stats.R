@@ -17,8 +17,7 @@ imgs <- list(
   twitter = "https://img.shields.io/badge/X-9k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-10k-_.svg?style=social&logo=linkedin",
   sponsors = sprintf("https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA"),
-  citations = sprintf("https://img.shields.io/badge/Citations-%sk-_.svg?style=social&logo=google-scholar", round(citations / 1000, digits = 1)),
-  wechat = sprintf("https://img.shields.io/badge/%s--_.svg?style=social&logo=wechat", URLencode("WeChat", reserved = TRUE))
+  citations = sprintf("https://img.shields.io/badge/Citations-%sk-_.svg?style=social&logo=google-scholar", round(citations / 1000, digits = 1))
 )
 
 for (i in 1:length(imgs)) {
