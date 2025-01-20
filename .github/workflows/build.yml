@@ -43,7 +43,7 @@ jobs:
 
     - name: Install R package dependencies
       run: |
-        if (!require('rvest')) install.packages('rvest')
+        if (!require('rvest')) install.packages(c('rvest', 'stringi'))
       shell: Rscript {0}
 
     - name: Fetch stats and update README.md
