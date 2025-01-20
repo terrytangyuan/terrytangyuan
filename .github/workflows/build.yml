@@ -35,15 +35,12 @@ jobs:
 
     - name: Install system dependencies
       run: |
-        sudo apt-get install libcurl4-openssl-dev wget
-        wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-7_amd64.deb
-        sudo dpkg -i libicu55_55.1-7_amd64.deb
-        sudo apt-get -f install
-        rm libicu55_55.1-7_amd64.deb
+        sudo apt-get install libcurl4-openssl-dev
 
     - name: Install R package dependencies
       run: |
-        if (!require('rvest')) install.packages(c('rvest', 'stringi'))
+        if (!require('rvest')) install.packages('rvest')
+        if (!require('stringi')) install.packages('stringi')
       shell: Rscript {0}
 
     - name: Fetch stats and update README.md
