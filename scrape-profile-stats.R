@@ -3,7 +3,8 @@ library(rvest)
 gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 readme_loc <- "README.md"
 
-citations <- read_html(gscholar_link) %>%
+citations <- httr::GET(config = httr::config(ssl_verifypeer = FALSE)) %>%
+  read_html(gscholar_link) %>%
   html_nodes("#gsc_rsb_st") %>%
   .[[1]] %>%
   html_table() %>%
