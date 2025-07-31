@@ -18,7 +18,7 @@ imgs <- list(
   sponsors = sprintf("https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA"),
   # Numbers for X, LinkedIn, citations need to be updated manually
   twitter = "https://img.shields.io/badge/X-9k-_.svg?style=social&logo=x",
-  linkedin = "https://img.shields.io/badge/LinkedIn-12k-_.svg?style=social&logo=linkedin",
+  linkedin = "https://img.shields.io/badge/LinkedIn-13k-_.svg?style=social&logo=linkedin",
   citations = sprintf("https://img.shields.io/badge/Citations-8.5k-_.svg?style=social&logo=google-scholar")
 )
 
