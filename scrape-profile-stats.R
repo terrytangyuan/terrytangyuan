@@ -20,7 +20,7 @@ imgs <- list(
   # Numbers for X, LinkedIn, citations need to be updated manually
   twitter = "https://img.shields.io/badge/X-9k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-13k-_.svg?style=social&logo=linkedin",
-  citations = sprintf("https://img.shields.io/badge/Citations-8.5k-_.svg?style=social&logo=google-scholar")
+  citations = sprintf("https://img.shields.io/badge/Citations-8.8k-_.svg?style=social&logo=google-scholar")
 )
 
 for (i in 1:length(imgs)) {
