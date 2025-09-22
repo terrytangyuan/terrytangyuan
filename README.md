@@ -6,6 +6,7 @@
 	<a href="https://github.com/terrytangyuan"><img src="imgs/github.svg" alt="GitHub"></a>
 	<a rel="me" href="https://fosstodon.org/@terrytangyuan"><img src="imgs/mastodon.svg" alt="Mastodon"></a>
 	<a href="https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"><img src="imgs/citations.svg" alt="Citations"></a>
+	<a href="https://substack.com/@terrytangyuan"><img src="imgs/substack.svg" alt="Substack"></a>
 	<a href="https://github.com/sponsors/terrytangyuan"><img src="imgs/sponsors.svg" alt="Sponsors"></a>
 </p>
 
