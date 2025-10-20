@@ -17,11 +17,11 @@ imgs <- list(
   github = "https://img.shields.io/github/followers/terrytangyuan.svg?label=GitHub&style=social",
   sponsors = "https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA",
   mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
-  # Numbers for X, LinkedIn, citations need to be updated manually
+  # Numbers for X, LinkedIn, citations, and Substack need to be updated manually
   twitter = "https://img.shields.io/badge/X-9.2k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-16k-_.svg?style=social&logo=linkedin",
   citations = "https://img.shields.io/badge/Citations-9.1k-_.svg?style=social&logo=google-scholar",
-  substack = "https://img.shields.io/badge/Substack-702-_.svg?style=social&logo=substack"
+  substack = "https://img.shields.io/badge/Substack-720-_.svg?style=social&logo=substack"
 )
 
 for (i in 1:length(imgs)) {
