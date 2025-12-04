@@ -18,7 +18,7 @@ imgs <- list(
   sponsors = "https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA",
   mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
   # Numbers for X, LinkedIn, citations, and Substack need to be updated manually
-  twitter = "https://img.shields.io/badge/X-9.7k-_.svg?style=social&logo=x",
+  twitter = "https://img.shields.io/badge/X-9.8k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-20k-_.svg?style=social&logo=linkedin",
   citations = "https://img.shields.io/badge/Citations-9.4k-_.svg?style=social&logo=google-scholar",
   substack = "https://img.shields.io/badge/Substack-1k-_.svg?style=social&logo=substack"
