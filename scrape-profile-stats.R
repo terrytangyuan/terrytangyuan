@@ -21,7 +21,7 @@ imgs <- list(
   twitter = "https://img.shields.io/badge/X-9.8k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-20k-_.svg?style=social&logo=linkedin",
   citations = "https://img.shields.io/badge/Citations-9.4k-_.svg?style=social&logo=google-scholar",
-  substack = "https://img.shields.io/badge/Substack-1k-_.svg?style=social&logo=substack"
+  substack = "https://img.shields.io/badge/Substack-1.1k-_.svg?style=social&logo=substack"
 )
 
 for (i in 1:length(imgs)) {
