@@ -20,7 +20,7 @@ imgs <- list(
   # Numbers for X, LinkedIn, citations, and Substack need to be updated manually
   twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-21.2k-_.svg?style=social&logo=linkedin",
-  citations = "https://img.shields.io/badge/Citations-9.4k-_.svg?style=social&logo=google-scholar",
+  citations = "https://img.shields.io/badge/Citations-9.5k-_.svg?style=social&logo=google-scholar",
   substack = "https://img.shields.io/badge/Substack-1.2k-_.svg?style=social&logo=substack"
 )
 
