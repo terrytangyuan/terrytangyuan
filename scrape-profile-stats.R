@@ -8,7 +8,7 @@ citations_formatted <- "9.5k"
 
 # Retry logic with exponential backoff
 max_retries <- 3
-retry_delay <- 2  # Initial delay in seconds
+success <- FALSE
 
 for (attempt in 1:max_retries) {
   tryCatch({
@@ -26,6 +26,11 @@ for (attempt in 1:max_retries) {
       html_table() %>%
       .[1, "All"]
     
+    # Validate that we got citations data
+    if (is.null(citations) || is.na(citations) || citations == "") {
+      stop("No citations data retrieved")
+    }
+    
     # Format citations for badge (e.g., 9400 -> "9.4k")
     citations_num <- as.numeric(gsub(",", "", citations))
     
@@ -33,13 +38,15 @@ for (attempt in 1:max_retries) {
     if (!is.na(citations_num) && citations_num >= 1000 && citations_num < 1000000) {
       citations_formatted <- sprintf("%.1fk", citations_num / 1000)
       message("Successfully scraped citations: ", citations_formatted)
+      success <- TRUE
       break  # Success, exit the retry loop
     }
   }, error = function(e) {
     if (attempt < max_retries) {
-      message(sprintf("Attempt %d failed: %s. Retrying in %d seconds...", attempt, e$message, retry_delay))
-      Sys.sleep(retry_delay)
-      retry_delay <<- retry_delay * 2  # Exponential backoff
+      # Calculate delay with exponential backoff: 2^attempt seconds
+      delay <- 2^attempt
+      message(sprintf("Attempt %d failed: %s. Retrying in %d seconds...", attempt, e$message, delay))
+      Sys.sleep(delay)
     } else {
       message("Warning: Could not scrape citations after ", max_retries, " attempts. Using default value. Error: ", e$message)
     }
