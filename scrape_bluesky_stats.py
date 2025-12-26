@@ -2,6 +2,8 @@ from atproto import Client
 from decimal import *
 import requests
 import os
+import sys
+from validate_svg import validate_svg
 
 
 def human_format(num):
@@ -29,5 +31,15 @@ image_url = (
     % followers_count
 )
 img_data = requests.get(image_url).content
-with open("imgs/bluesky.svg", "wb") as handler:
+svg_file = "imgs/bluesky.svg"
+with open(svg_file, "wb") as handler:
     handler.write(img_data)
+
+# Validate the downloaded SVG
+print(f"\nValidating downloaded SVG file: {svg_file}")
+is_valid, message = validate_svg(svg_file)
+if not is_valid:
+    print(f"✗ Validation failed: {message}")
+    sys.exit(1)
+else:
+    print(f"✓ {message}")

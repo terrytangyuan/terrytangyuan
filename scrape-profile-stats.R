@@ -45,3 +45,10 @@ imgs <- list(
 for (i in 1:length(imgs)) {
   download.file(imgs[[i]], sprintf('imgs/%s.svg', names(imgs)[[i]]), mode = 'wb')
 }
+
+# Validate downloaded SVGs
+cat("\nValidating downloaded SVG files...\n")
+validation_result <- system("python validate_svg.py imgs", intern = FALSE)
+if (validation_result != 0) {
+  stop("SVG validation failed! Please check the downloaded files.")
+}
