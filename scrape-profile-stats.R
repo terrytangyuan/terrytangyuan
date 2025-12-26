@@ -36,10 +36,9 @@ for (attempt in 1:max_retries) {
           "Upgrade-Insecure-Requests" = "1",
           "Sec-Fetch-Dest" = "document",
           "Sec-Fetch-Mode" = "navigate",
-          "Sec-Fetch-Site" = "same-origin",
+          "Sec-Fetch-Site" = "none",
           "Sec-Fetch-User" = "?1",
-          "Cache-Control" = "max-age=0",
-          "Referer" = "https://scholar.google.com/"
+          "Cache-Control" = "max-age=0"
         )
       ) %>%
       read_html() %>%
