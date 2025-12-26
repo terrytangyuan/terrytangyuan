@@ -47,6 +47,10 @@ jobs:
       run: |
         Rscript scrape-profile-stats.R
 
+    - name: Validate all SVG files
+      run: |
+        python validate_svg.py imgs
+
     - name: Commit and push if needed
       run: |-
         git diff
