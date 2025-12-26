@@ -69,8 +69,8 @@ def validate_svg(file_path, check_numeric=True):
     # Check for numeric values in the SVG content (except for cv badge)
     if check_numeric:
         # Look for numbers with optional decimal point and k/M/B/T suffix
-        # Pattern matches numbers like: 123, 1.2k, 15.7k, 9.5k, etc.
-        numeric_pattern = r'>\d+\.?\d*[kMBT]?</text>'
+        # Pattern matches numbers like: 10, 123, 1.2k, 15.7k, 9.5k, 5k, etc.
+        numeric_pattern = r'>\d+(?:\.\d+)?[kMBT]?</text>'
         if not re.search(numeric_pattern, content):
             return False, f"SVG does not contain expected numeric values: {file_path}"
     
