@@ -4,7 +4,7 @@ library(httr)
 gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 
 # Default to last known value in case scraping fails
-citations_formatted <- "9.5k"
+citations_formatted <- "9.4k"
 
 # Retry logic with exponential backoff
 max_retries <- 3
