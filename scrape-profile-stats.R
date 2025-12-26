@@ -6,19 +6,36 @@ gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 # Default to last known value in case scraping fails
 citations_formatted <- "9.4k"
 
-# Retry logic with exponential backoff
-max_retries <- 3
+# Retry logic with exponential backoff and random jitter
+max_retries <- 5
 success <- FALSE
+
+# Add initial random delay to avoid predictable patterns (1-3 seconds)
+initial_delay <- runif(1, 1, 3)
+message(sprintf("Adding initial delay of %.1f seconds before first request...", initial_delay))
+Sys.sleep(initial_delay)
 
 for (attempt in 1:max_retries) {
   tryCatch({
-    # Add user agent to avoid being blocked
-    user_agent <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    # Add comprehensive browser headers to appear more like a real browser
+    user_agent <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     
     citations <- gscholar_link %>%
       httr::GET(
         config = httr::config(ssl_verifypeer = FALSE),
-        httr::user_agent(user_agent)
+        httr::user_agent(user_agent),
+        httr::add_headers(
+          "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+          "Accept-Language" = "en-US,en;q=0.9",
+          "Accept-Encoding" = "gzip, deflate, br",
+          "DNT" = "1",
+          "Connection" = "keep-alive",
+          "Upgrade-Insecure-Requests" = "1",
+          "Sec-Fetch-Dest" = "document",
+          "Sec-Fetch-Mode" = "navigate",
+          "Sec-Fetch-Site" = "none",
+          "Cache-Control" = "max-age=0"
+        )
       ) %>%
       read_html() %>%
       html_nodes("#gsc_rsb_st") %>%
@@ -43,9 +60,11 @@ for (attempt in 1:max_retries) {
     }
   }, error = function(e) {
     if (attempt < max_retries) {
-      # Calculate delay with exponential backoff: 2^attempt seconds
-      delay <- 2^attempt
-      message(sprintf("Attempt %d failed: %s. Retrying in %d seconds...", attempt, e$message, delay))
+      # Calculate delay with exponential backoff: 2^attempt seconds + random jitter
+      base_delay <- 2^attempt
+      jitter <- runif(1, 0, 2)  # Add 0-2 seconds of random jitter
+      delay <- base_delay + jitter
+      message(sprintf("Attempt %d failed: %s. Retrying in %.1f seconds...", attempt, e$message, delay))
       Sys.sleep(delay)
     } else {
       message("Warning: Could not scrape citations after ", max_retries, " attempts. Using default value. Error: ", e$message)
