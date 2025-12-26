@@ -22,7 +22,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - run: pip install atproto
+    - run: pip install atproto requests
     - run: python scrape_bluesky_stats.py
       env:
         BLUESKY_APP_HANDLE: ${{ secrets.BLUESKY_APP_HANDLE }}
