@@ -22,7 +22,10 @@ for (attempt in 1:max_retries) {
     
     citations <- gscholar_link %>%
       httr::GET(
-        config = httr::config(ssl_verifypeer = FALSE),
+        config = httr::config(
+          ssl_verifypeer = FALSE,
+          followlocation = TRUE
+        ),
         httr::user_agent(user_agent),
         httr::add_headers(
           "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -34,7 +37,9 @@ for (attempt in 1:max_retries) {
           "Sec-Fetch-Dest" = "document",
           "Sec-Fetch-Mode" = "navigate",
           "Sec-Fetch-Site" = "none",
-          "Cache-Control" = "max-age=0"
+          "Sec-Fetch-User" = "?1",
+          "Cache-Control" = "max-age=0",
+          "Referer" = "https://scholar.google.com/"
         )
       ) %>%
       read_html() %>%
