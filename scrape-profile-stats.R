@@ -6,26 +6,45 @@ gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 # Default to last known value in case scraping fails
 citations_formatted <- "9.5k"
 
-tryCatch({
-  citations <- gscholar_link %>%
-    httr::GET(config = httr::config(ssl_verifypeer = FALSE)) %>%
-    read_html() %>%
-    html_nodes("#gsc_rsb_st") %>%
-    .[[1]] %>%
-    html_table() %>%
-    .[1, "All"]
-  
-  # Format citations for badge (e.g., 9400 -> "9.4k")
-  citations_num <- as.numeric(gsub(",", "", citations))
-  
-  # Only format if we got a valid number in the thousands range
-  if (!is.na(citations_num) && citations_num >= 1000 && citations_num < 1000000) {
-    citations_formatted <- sprintf("%.1fk", citations_num / 1000)
-  }
-}, error = function(e) {
-  # If scraping fails, use default value
-  message("Warning: Could not scrape citations. Using default value. Error: ", e$message)
-})
+# Retry logic with exponential backoff
+max_retries <- 3
+retry_delay <- 2  # Initial delay in seconds
+
+for (attempt in 1:max_retries) {
+  tryCatch({
+    # Add user agent to avoid being blocked
+    user_agent <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    
+    citations <- gscholar_link %>%
+      httr::GET(
+        config = httr::config(ssl_verifypeer = FALSE),
+        httr::user_agent(user_agent)
+      ) %>%
+      read_html() %>%
+      html_nodes("#gsc_rsb_st") %>%
+      .[[1]] %>%
+      html_table() %>%
+      .[1, "All"]
+    
+    # Format citations for badge (e.g., 9400 -> "9.4k")
+    citations_num <- as.numeric(gsub(",", "", citations))
+    
+    # Only format if we got a valid number in the thousands range
+    if (!is.na(citations_num) && citations_num >= 1000 && citations_num < 1000000) {
+      citations_formatted <- sprintf("%.1fk", citations_num / 1000)
+      message("Successfully scraped citations: ", citations_formatted)
+      break  # Success, exit the retry loop
+    }
+  }, error = function(e) {
+    if (attempt < max_retries) {
+      message(sprintf("Attempt %d failed: %s. Retrying in %d seconds...", attempt, e$message, retry_delay))
+      Sys.sleep(retry_delay)
+      retry_delay <<- retry_delay * 2  # Exponential backoff
+    } else {
+      message("Warning: Could not scrape citations after ", max_retries, " attempts. Using default value. Error: ", e$message)
+    }
+  })
+}
 
 readme_loc <- "README.md"
 
