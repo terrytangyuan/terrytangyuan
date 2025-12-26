@@ -2,17 +2,30 @@ library(rvest)
 library(httr)
 
 gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
-citations <- gscholar_link %>%
-  httr::GET(config = httr::config(ssl_verifypeer = FALSE)) %>%
-  read_html() %>%
-  html_nodes("#gsc_rsb_st") %>%
-  .[[1]] %>%
-  html_table() %>%
-  .[1, "All"]
 
-# Format citations for badge (e.g., 9400 -> "9.4k")
-citations_num <- as.numeric(gsub(",", "", citations))
-citations_formatted <- sprintf("%.1fk", citations_num / 1000)
+# Default to last known value in case scraping fails
+citations_formatted <- "9.5k"
+
+tryCatch({
+  citations <- gscholar_link %>%
+    httr::GET(config = httr::config(ssl_verifypeer = FALSE)) %>%
+    read_html() %>%
+    html_nodes("#gsc_rsb_st") %>%
+    .[[1]] %>%
+    html_table() %>%
+    .[1, "All"]
+  
+  # Format citations for badge (e.g., 9400 -> "9.4k")
+  citations_num <- as.numeric(gsub(",", "", citations))
+  
+  # Only format if we got a valid number in the thousands range
+  if (!is.na(citations_num) && citations_num >= 1000 && citations_num < 1000000) {
+    citations_formatted <- sprintf("%.1fk", citations_num / 1000)
+  }
+}, error = function(e) {
+  # If scraping fails, use default value
+  message("Warning: Could not scrape citations. Using default value. Error: ", e$message)
+})
 
 readme_loc <- "README.md"
 
