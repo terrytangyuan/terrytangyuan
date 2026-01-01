@@ -105,7 +105,7 @@ imgs <- list(
   twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-21.4k-_.svg?style=social&logo=linkedin",
   substack = "https://img.shields.io/badge/Substack-1.2k-_.svg?style=social&logo=substack",
-  followers = sprintf("https://img.shields.io/badge/Followers-%s-_.svg?style=social&logo=rss", total_followers)
+  followers = sprintf("https://img.shields.io/badge/Followers-%s-_.svg?style=social", total_followers)
 )
 
 for (i in 1:length(imgs)) {
