@@ -1,15 +1,14 @@
 import re
 import os
 import sys
-from decimal import Decimal, getcontext, ROUND_CEILING
 
 
 def parse_follower_count(svg_content, platform):
     """
     Parse follower count from SVG content.
     """
-    # Try to find aria-label first
-    aria_match = re.search(r'aria-label="[^:]+:\s*([0-9.]+[kKmM]?)"', svg_content)
+    # Try to find aria-label first - capture the last numeric value
+    aria_match = re.search(r'aria-label="[^"]+?([0-9.]+[kKmM]?)"', svg_content)
     if aria_match:
         return aria_match.group(1)
     
@@ -51,17 +50,17 @@ def convert_to_number(count_str):
 def human_format(num):
     """
     Format number to human-readable format (e.g., 52752 -> "52.8k").
+    Uses standard rounding to one decimal place.
     """
-    getcontext().prec = 2
-    getcontext().rounding = ROUND_CEILING
-    _num = Decimal(num)
-    num = float(f"{_num:.3g}")
     magnitude = 0
     while abs(num) >= 1000:
         magnitude += 1
         num /= 1000.0
-    num = int(num * 10) / 10
-    return f"{f'{num:f}'.rstrip('0').rstrip('.')}{['', 'k', 'M', 'B', 'T'][magnitude]}"
+    # Round to one decimal place
+    num = round(num, 1)
+    # Format and strip unnecessary zeros
+    formatted = f"{num:.1f}".rstrip('0').rstrip('.')
+    return f"{formatted}{['', 'k', 'M', 'B', 'T'][magnitude]}"
 
 
 def main():

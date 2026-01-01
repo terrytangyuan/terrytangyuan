@@ -79,8 +79,20 @@ for (attempt in 1:max_retries) {
 readme_loc <- "README.md"
 
 # Calculate total followers by running the Python script
-total_followers <- system("python calculate_total_followers.py", intern = TRUE)
-message("Total followers calculated: ", total_followers)
+# Default to last known value in case calculation fails
+total_followers <- "52.8k"
+
+tryCatch({
+  total_followers_result <- system("python calculate_total_followers.py", intern = TRUE)
+  if (!is.null(total_followers_result) && length(total_followers_result) > 0 && nchar(total_followers_result[[1]]) > 0) {
+    total_followers <- total_followers_result[[1]]
+    message("Total followers calculated: ", total_followers)
+  } else {
+    message("Warning: Could not calculate total followers. Using default value: ", total_followers)
+  }
+}, error = function(e) {
+  message("Warning: Error calculating total followers. Using default value: ", total_followers, ". Error: ", e$message)
+})
 
 # Download images in advance so we don't rely on img.shields.io at rendering time.
 imgs <- list(
