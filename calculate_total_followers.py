@@ -58,8 +58,11 @@ def human_format(num):
         num /= 1000.0
     # Round to one decimal place
     num = round(num, 1)
-    # Format and strip unnecessary zeros
-    formatted = f"{num:.1f}".rstrip('0').rstrip('.')
+    # Format number - if it's a whole number, don't show decimal
+    if num == int(num):
+        formatted = str(int(num))
+    else:
+        formatted = f"{num:.1f}"
     return f"{formatted}{['', 'k', 'M', 'B', 'T'][magnitude]}"
 
 

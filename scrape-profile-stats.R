@@ -83,7 +83,7 @@ readme_loc <- "README.md"
 total_followers <- "52.8k"
 
 tryCatch({
-  total_followers_result <- system("python calculate_total_followers.py", intern = TRUE)
+  total_followers_result <- system("python3 calculate_total_followers.py", intern = TRUE)
   if (!is.null(total_followers_result) && length(total_followers_result) > 0 && nchar(total_followers_result[[1]]) > 0) {
     total_followers <- total_followers_result[[1]]
     message("Total followers calculated: ", total_followers)
