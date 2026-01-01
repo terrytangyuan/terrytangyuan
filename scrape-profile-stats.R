@@ -78,6 +78,22 @@ for (attempt in 1:max_retries) {
 
 readme_loc <- "README.md"
 
+# Calculate total followers by running the Python script
+# Default to last known value in case calculation fails
+total_followers <- "52.8k"
+
+tryCatch({
+  total_followers_result <- system("python3 calculate_total_followers.py", intern = TRUE)
+  if (!is.null(total_followers_result) && length(total_followers_result) > 0 && nchar(total_followers_result[[1]]) > 0) {
+    total_followers <- total_followers_result[[1]]
+    message("Total followers calculated: ", total_followers)
+  } else {
+    message("Warning: Could not calculate total followers. Using default value: ", total_followers)
+  }
+}, error = function(e) {
+  message("Warning: Error calculating total followers. Using default value: ", total_followers, ". Error: ", e$message)
+})
+
 # Download images in advance so we don't rely on img.shields.io at rendering time.
 imgs <- list(
   cv = "https://img.shields.io/badge/Curriculum%20Vitae--_.svg?style=social&logo=giphy",
@@ -88,7 +104,8 @@ imgs <- list(
   # Numbers for X, LinkedIn, and Substack need to be updated manually
   twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-21.4k-_.svg?style=social&logo=linkedin",
-  substack = "https://img.shields.io/badge/Substack-1.2k-_.svg?style=social&logo=substack"
+  substack = "https://img.shields.io/badge/Substack-1.2k-_.svg?style=social&logo=substack",
+  followers = sprintf("https://img.shields.io/badge/Followers-%s-_.svg?style=social&logo=rss", total_followers)
 )
 
 for (i in 1:length(imgs)) {
