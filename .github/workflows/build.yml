@@ -22,17 +22,11 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - run: pip install atproto requests beautifulsoup4
+    - run: pip install atproto requests
     - run: python scrape_bluesky_stats.py
       env:
         BLUESKY_APP_HANDLE: ${{ secrets.BLUESKY_APP_HANDLE }}
         BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
-    # Scrape Substack followers dynamically. Falls back to SUBSTACK_FOLLOWERS secret if scraping fails.
-    # To set the secret: Go to repo Settings > Secrets and variables > Actions > New repository secret
-    # Set SUBSTACK_FOLLOWERS to the current follower count (e.g., 1200)
-    - run: python scrape_substack_stats.py
-      env:
-        SUBSTACK_FOLLOWERS: ${{ secrets.SUBSTACK_FOLLOWERS }}
 
     - name: Cache R packages
       uses: actions/cache@v4
