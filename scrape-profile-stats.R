@@ -12,17 +12,17 @@ extract_value_from_svg <- function(svg_path) {
     svg_content <- paste(readLines(svg_path, warn = FALSE), collapse = "\n")
     
     # Extract value from aria-label attribute (e.g., "Citations: 9.5k" or "Followers: 52.8k")
-    aria_match <- regmatches(svg_content, regexec('aria-label="[^:]+:\\s*([0-9.]+[kKmMbBtT]?)"', svg_content))
+    aria_match <- regmatches(svg_content, regexec('aria-label="[^:]+:\\s*([0-9]+\\.?[0-9]*[kKmMbBtT]?)"', svg_content))
     if (length(aria_match[[1]]) > 1) {
       return(aria_match[[1]][2])
     }
     
     # Fallback: try to extract from text elements
-    text_matches <- regmatches(svg_content, gregexpr('<text[^>]*>([0-9.]+[kKmMbBtT]?)</text>', svg_content, perl = TRUE))
+    text_matches <- regmatches(svg_content, gregexpr('<text[^>]*>([0-9]+\\.?[0-9]*[kKmMbBtT]?)</text>', svg_content, perl = TRUE))
     if (length(text_matches[[1]]) > 0) {
       # Get the last match as it's usually the actual value
       last_match <- tail(text_matches[[1]], 1)
-      value_match <- regmatches(last_match, regexec('>([0-9.]+[kKmMbBtT]?)<', last_match))
+      value_match <- regmatches(last_match, regexec('>([0-9]+\\.?[0-9]*[kKmMbBtT]?)<', last_match))
       if (length(value_match[[1]]) > 1) {
         return(value_match[[1]][2])
       }
