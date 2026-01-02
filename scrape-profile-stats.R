@@ -122,8 +122,14 @@ for (attempt in 1:max_retries) {
 readme_loc <- "README.md"
 
 # Scrape Substack followers dynamically
-# Default to last known value in case scraping fails
-substack_formatted <- "1.2k"
+# Default to value from existing SVG, or fallback to hardcoded value
+substack_formatted <- extract_value_from_svg("imgs/substack.svg")
+if (is.null(substack_formatted)) {
+  substack_formatted <- "1.2k"
+  message("Using hardcoded default for Substack: ", substack_formatted)
+} else {
+  message("Using value from existing SVG for Substack: ", substack_formatted)
+}
 
 # Retry logic with exponential backoff and random jitter
 max_retries_substack <- 3
