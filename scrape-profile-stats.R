@@ -121,6 +121,99 @@ for (attempt in 1:max_retries) {
 
 readme_loc <- "README.md"
 
+# Scrape Substack followers dynamically
+# Default to value from existing SVG, or fallback to hardcoded value
+substack_formatted <- extract_value_from_svg("imgs/substack.svg")
+if (is.null(substack_formatted)) {
+  substack_formatted <- "1.2k"
+  message("Using hardcoded default for Substack: ", substack_formatted)
+} else {
+  message("Using value from existing SVG for Substack: ", substack_formatted)
+}
+
+# Retry logic with exponential backoff and random jitter
+max_retries_substack <- 3
+success_substack <- FALSE
+
+for (attempt in 1:max_retries_substack) {
+  tryCatch({
+    substack_link <- "https://substack.com/@terrytangyuan"
+    
+    # Add random delay to avoid rate limiting (1-3 seconds)
+    initial_delay <- runif(1, 1, 3)
+    message(sprintf("Adding initial delay of %.1f seconds before Substack request (attempt %d/%d)...", initial_delay, attempt, max_retries_substack))
+    Sys.sleep(initial_delay)
+    
+    user_agent <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    
+    substack_page <- substack_link %>%
+      httr::GET(
+        config = httr::config(
+          ssl_verifypeer = FALSE,
+          followlocation = TRUE
+        ),
+        httr::user_agent(user_agent),
+        httr::add_headers(
+          "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+          "Accept-Language" = "en-US,en;q=0.9",
+          "Accept-Encoding" = "gzip, deflate, br",
+          "DNT" = "1",
+          "Connection" = "keep-alive",
+          "Upgrade-Insecure-Requests" = "1",
+          "Sec-Fetch-Dest" = "document",
+          "Sec-Fetch-Mode" = "navigate",
+          "Sec-Fetch-Site" = "none",
+          "Sec-Fetch-User" = "?1",
+          "Cache-Control" = "max-age=0"
+        )
+      ) %>%
+      read_html()
+    
+    # Try to extract subscriber/follower count from the page
+    # Look for patterns like "1,200 subscribers" or similar
+    page_text <- substack_page %>% html_text()
+    
+    # Try various patterns to find subscriber count
+    subscriber_match <- regexpr("([0-9,]+)\\s+(subscriber|follower)s?", page_text, ignore.case = TRUE, perl = TRUE)
+    
+    if (subscriber_match[[1]] > 0) {
+      matched_text <- regmatches(page_text, subscriber_match)
+      
+      # Extract just the number with proper error handling
+      if (length(matched_text) > 0) {
+        number_match <- regmatches(matched_text, regexpr("[0-9,]+", matched_text))
+        
+        if (length(number_match) > 0 && length(number_match[[1]]) > 0) {
+          subscriber_num <- as.numeric(gsub(",", "", number_match[[1]]))
+          
+          # Validate that we got subscriber data
+          if (!is.na(subscriber_num) && subscriber_num >= 1000 && subscriber_num < 1000000) {
+            substack_formatted <- sprintf("%.1fk", subscriber_num / 1000)
+            message("Successfully scraped Substack followers: ", substack_formatted)
+            success_substack <- TRUE
+            break  # Success, exit the retry loop
+          }
+        }
+      }
+    }
+    
+    if (!success_substack) {
+      message("Warning: Could not find subscriber count in Substack page.")
+    }
+  }, error = function(e) {
+    if (attempt < max_retries_substack) {
+      # Calculate delay with exponential backoff: 2^attempt seconds + random jitter
+      base_delay <- 2^attempt
+      jitter <- runif(1, 0, 2)  # Add 0-2 seconds of random jitter
+      delay <- base_delay + jitter
+      message(sprintf("Attempt %d failed: %s. Retrying in %.1f seconds...", attempt, e$message, delay))
+      Sys.sleep(delay)
+    } else {
+      message("Warning: Could not scrape Substack followers after ", max_retries_substack, " attempts. Using default value: ", substack_formatted, ". Error: ", e$message)
+    }
+  })
+}
+
 # Calculate total followers by running the Python script
 # Default to value from existing SVG, or fallback to hardcoded value
 total_followers <- extract_value_from_svg("imgs/followers.svg")
@@ -150,10 +243,11 @@ imgs <- list(
   sponsors = "https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA",
   mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
   citations = sprintf("https://img.shields.io/badge/Citations-%s-_.svg?style=social&logo=google-scholar", citations_formatted),
-  # Numbers for X, LinkedIn, and Substack need to be updated manually
+  # Numbers for X and LinkedIn need to be updated manually
+  # Substack is now scraped dynamically above
   twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-21.4k-_.svg?style=social&logo=linkedin",
-  substack = "https://img.shields.io/badge/Substack-1.2k-_.svg?style=social&logo=substack",
+  substack = sprintf("https://img.shields.io/badge/Substack-%s-_.svg?style=social&logo=substack", substack_formatted),
   followers = sprintf("https://img.shields.io/badge/Followers-%s-_.svg?style=social", total_followers)
 )
 
