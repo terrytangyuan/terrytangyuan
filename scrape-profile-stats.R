@@ -101,10 +101,10 @@ imgs <- list(
   sponsors = "https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA",
   mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
   citations = sprintf("https://img.shields.io/badge/Citations-%s-_.svg?style=social&logo=google-scholar", citations_formatted),
-  # Numbers for X, LinkedIn, and Substack need to be updated manually
+  # Numbers for X and LinkedIn need to be updated manually
+  # Substack is now scraped dynamically by scrape_substack_stats.py
   twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
   linkedin = "https://img.shields.io/badge/LinkedIn-21.4k-_.svg?style=social&logo=linkedin",
-  substack = "https://img.shields.io/badge/Substack-1.2k-_.svg?style=social&logo=substack",
   followers = sprintf("https://img.shields.io/badge/Followers-%s-_.svg?style=social", total_followers)
 )
 
