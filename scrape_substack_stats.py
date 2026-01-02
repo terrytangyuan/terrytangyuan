@@ -170,8 +170,19 @@ def main():
     )
     
     # Download the badge
-    img_data = requests.get(image_url).content
-    svg_file = "imgs/substack.svg"
+    try:
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        img_data = response.content
+    except Exception as e:
+        print(f"Error downloading badge: {e}", file=sys.stderr)
+        sys.exit(1)
+    
+    # Ensure the imgs directory exists
+    svg_dir = "imgs"
+    os.makedirs(svg_dir, exist_ok=True)
+    
+    svg_file = os.path.join(svg_dir, "substack.svg")
     with open(svg_file, "wb") as handler:
         handler.write(img_data)
     
