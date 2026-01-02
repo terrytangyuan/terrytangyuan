@@ -1,10 +1,53 @@
 library(rvest)
 library(httr)
 
+# Helper function to extract value from SVG badge file
+extract_value_from_svg <- function(svg_path) {
+  # Regex pattern for numeric values with optional decimal and magnitude suffix
+  numeric_pattern <- '[0-9]+\\.?[0-9]*[kKmMbBtT]?'
+  
+  tryCatch({
+    if (!file.exists(svg_path)) {
+      return(NULL)
+    }
+    
+    # Read the SVG file
+    svg_content <- paste(readLines(svg_path, warn = FALSE), collapse = "\n")
+    
+    # Extract value from aria-label attribute (e.g., "Citations: 9.5k" or "Followers: 52.8k")
+    aria_match <- regmatches(svg_content, regexec(sprintf('aria-label="[^:]+:\\s*(%s)"', numeric_pattern), svg_content))
+    if (length(aria_match[[1]]) > 1) {
+      return(aria_match[[1]][2])
+    }
+    
+    # Fallback: try to extract from text elements
+    text_matches <- regmatches(svg_content, gregexpr(sprintf('<text[^>]*>(%s)</text>', numeric_pattern), svg_content, perl = TRUE))
+    if (length(text_matches[[1]]) > 0) {
+      # Get the last match as it's usually the actual value
+      last_match <- tail(text_matches[[1]], 1)
+      value_match <- regmatches(last_match, regexec(sprintf('>(%s)<', numeric_pattern), last_match))
+      if (length(value_match[[1]]) > 1) {
+        return(value_match[[1]][2])
+      }
+    }
+    
+    return(NULL)
+  }, error = function(e) {
+    message("Warning: Could not extract value from ", svg_path, ": ", e$message)
+    return(NULL)
+  })
+}
+
 gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 
-# Default to last known value in case scraping fails
-citations_formatted <- "9.4k"
+# Default to value from existing SVG, or fallback to hardcoded value
+citations_formatted <- extract_value_from_svg("imgs/citations.svg")
+if (is.null(citations_formatted)) {
+  citations_formatted <- "9.4k"
+  message("Using hardcoded default for citations: ", citations_formatted)
+} else {
+  message("Using value from existing SVG for citations: ", citations_formatted)
+}
 
 # Retry logic with exponential backoff and random jitter
 max_retries <- 5
@@ -166,8 +209,14 @@ for (attempt in 1:max_retries_substack) {
 }
 
 # Calculate total followers by running the Python script
-# Default to last known value in case calculation fails
-total_followers <- "52.8k"
+# Default to value from existing SVG, or fallback to hardcoded value
+total_followers <- extract_value_from_svg("imgs/followers.svg")
+if (is.null(total_followers)) {
+  total_followers <- "52.8k"
+  message("Using hardcoded default for total followers: ", total_followers)
+} else {
+  message("Using value from existing SVG for total followers: ", total_followers)
+}
 
 tryCatch({
   total_followers_result <- system("python3 calculate_total_followers.py", intern = TRUE)
