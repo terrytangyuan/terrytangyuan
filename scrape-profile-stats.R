@@ -246,7 +246,7 @@ imgs <- list(
   # Numbers for X and LinkedIn need to be updated manually
   # Substack is now scraped dynamically above
   twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
-  linkedin = "https://img.shields.io/badge/LinkedIn-21.4k-_.svg?style=social&logo=linkedin",
+  linkedin = "https://img.shields.io/badge/LinkedIn-21.5k-_.svg?style=social&logo=linkedin",
   substack = sprintf("https://img.shields.io/badge/Substack-%s-_.svg?style=social&logo=substack", substack_formatted),
   followers = sprintf("https://img.shields.io/badge/Followers-%s-_.svg?style=social", total_followers)
 )
