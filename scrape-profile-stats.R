@@ -214,6 +214,23 @@ for (attempt in 1:max_retries_substack) {
   })
 }
 
+# Download all images (except for total followers) in advance so we don't rely on img.shields.io at rendering time.
+imgs <- list(
+  cv = "https://img.shields.io/badge/Curriculum%20Vitae--_.svg?style=social&logo=giphy",
+  github = "https://img.shields.io/github/followers/terrytangyuan.svg?label=GitHub&style=social",
+  sponsors = "https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA",
+  mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
+  citations = sprintf("https://img.shields.io/badge/Citations-%s-_.svg?style=social&logo=google-scholar", citations_formatted),
+  # Numbers for X and LinkedIn need to be updated manually
+  # Substack is now scraped dynamically above
+  twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
+  linkedin = "https://img.shields.io/badge/LinkedIn-21.5k-_.svg?style=social&logo=linkedin",
+  substack = sprintf("https://img.shields.io/badge/Substack-%s-_.svg?style=social&logo=substack", substack_formatted)
+)
+for (i in 1:length(imgs)) {
+  download.file(imgs[[i]], sprintf('imgs/%s.svg', names(imgs)[[i]]), mode = 'wb')
+}
+
 # Calculate total followers by running the Python script
 # Default to value from existing SVG, or fallback to hardcoded value
 total_followers <- extract_value_from_svg("imgs/followers.svg")
@@ -236,24 +253,8 @@ tryCatch({
   message("Warning: Error calculating total followers. Using default value: ", total_followers, ". Error: ", e$message)
 })
 
-# Download images in advance so we don't rely on img.shields.io at rendering time.
-imgs <- list(
-  cv = "https://img.shields.io/badge/Curriculum%20Vitae--_.svg?style=social&logo=giphy",
-  github = "https://img.shields.io/github/followers/terrytangyuan.svg?label=GitHub&style=social",
-  sponsors = "https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA",
-  mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
-  citations = sprintf("https://img.shields.io/badge/Citations-%s-_.svg?style=social&logo=google-scholar", citations_formatted),
-  # Numbers for X and LinkedIn need to be updated manually
-  # Substack is now scraped dynamically above
-  twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
-  linkedin = "https://img.shields.io/badge/LinkedIn-21.5k-_.svg?style=social&logo=linkedin",
-  substack = sprintf("https://img.shields.io/badge/Substack-%s-_.svg?style=social&logo=substack", substack_formatted),
-  followers = sprintf("https://img.shields.io/badge/Followers-%s-_.svg?style=social", total_followers)
-)
-
-for (i in 1:length(imgs)) {
-  download.file(imgs[[i]], sprintf('imgs/%s.svg', names(imgs)[[i]]), mode = 'wb')
-}
+# Download this one separately since we'll be using all updated and downloaded SVGs to calculate the total followers
+download.file(sprintf("https://img.shields.io/badge/Followers-%s-_.svg?style=social", total_followers), 'imgs/followers.svg', mode = 'wb')
 
 # Validate downloaded SVGs
 cat("\nValidating downloaded SVG files...\n")
