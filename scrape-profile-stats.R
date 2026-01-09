@@ -1,6 +1,18 @@
 library(rvest)
 library(httr)
 
+# Link to Google Scholar profile
+gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
+
+# These fallback values will be used when they cannot be extracted from existing SVG files or scraped from websites
+total_followers_fallback <- "52.8k"
+substack_formatted_fallback <- "1.2k"
+citations_formatted_fallback <- "9.4k"
+
+# Numbers for X and LinkedIn need to be updated manually
+twitter_followers <- "9.9k",
+linkedin_followers <- "21.6k"
+
 # Helper function to extract value from SVG badge file
 extract_value_from_svg <- function(svg_path) {
   # Regex pattern for numeric values with optional decimal and magnitude suffix
@@ -38,12 +50,10 @@ extract_value_from_svg <- function(svg_path) {
   })
 }
 
-gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
-
 # Default to value from existing SVG, or fallback to hardcoded value
 citations_formatted <- extract_value_from_svg("imgs/citations.svg")
 if (is.null(citations_formatted)) {
-  citations_formatted <- "9.4k"
+  citations_formatted <- citations_formatted_fallback
   message("Using hardcoded default for citations: ", citations_formatted)
 } else {
   message("Using value from existing SVG for citations: ", citations_formatted)
@@ -119,13 +129,11 @@ for (attempt in 1:max_retries) {
   })
 }
 
-readme_loc <- "README.md"
-
 # Scrape Substack followers dynamically
 # Default to value from existing SVG, or fallback to hardcoded value
 substack_formatted <- extract_value_from_svg("imgs/substack.svg")
 if (is.null(substack_formatted)) {
-  substack_formatted <- "1.2k"
+  substack_formatted <- substack_formatted_fallback
   message("Using hardcoded default for Substack: ", substack_formatted)
 } else {
   message("Using value from existing SVG for Substack: ", substack_formatted)
@@ -221,11 +229,9 @@ imgs <- list(
   sponsors = "https://img.shields.io/github/sponsors/terrytangyuan?label=Sponsors&style=social&logoColor=EA4AAA",
   mastodon = "https://img.shields.io/mastodon/follow/109697385486067962?domain=https%3A%2F%2Ffosstodon.org&label=Mastodon&style=social",
   citations = sprintf("https://img.shields.io/badge/Citations-%s-_.svg?style=social&logo=google-scholar", citations_formatted),
-  # Numbers for X and LinkedIn need to be updated manually
-  # Substack is now scraped dynamically above
-  twitter = "https://img.shields.io/badge/X-9.9k-_.svg?style=social&logo=x",
-  linkedin = "https://img.shields.io/badge/LinkedIn-21.5k-_.svg?style=social&logo=linkedin",
-  substack = sprintf("https://img.shields.io/badge/Substack-%s-_.svg?style=social&logo=substack", substack_formatted)
+  substack = sprintf("https://img.shields.io/badge/Substack-%s-_.svg?style=social&logo=substack", substack_formatted),
+  twitter = sprintf("https://img.shields.io/badge/X-%s-_.svg?style=social&logo=x", twitter_followers),
+  linkedin = sprintf("https://img.shields.io/badge/LinkedIn-%s-_.svg?style=social&logo=linkedin", linkedin_followers)
 )
 for (i in 1:length(imgs)) {
   download.file(imgs[[i]], sprintf('imgs/%s.svg', names(imgs)[[i]]), mode = 'wb')
@@ -235,7 +241,7 @@ for (i in 1:length(imgs)) {
 # Default to value from existing SVG, or fallback to hardcoded value
 total_followers <- extract_value_from_svg("imgs/followers.svg")
 if (is.null(total_followers)) {
-  total_followers <- "52.8k"
+  total_followers <- total_followers_fallback
   message("Using hardcoded default for total followers: ", total_followers)
 } else {
   message("Using value from existing SVG for total followers: ", total_followers)
