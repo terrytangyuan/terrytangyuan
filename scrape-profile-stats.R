@@ -10,7 +10,7 @@ substack_formatted_fallback <- "1.2k"
 citations_formatted_fallback <- "9.4k"
 
 # Numbers for X and LinkedIn need to be updated manually
-twitter_followers <- "9.9k",
+twitter_followers <- "9.9k"
 linkedin_followers <- "21.6k"
 
 # Helper function to extract value from SVG badge file
