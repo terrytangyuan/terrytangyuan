@@ -13,6 +13,77 @@ citations_formatted_fallback <- "9.4k"
 twitter_followers <- "9.9k",
 linkedin_followers <- "21.6k"
 
+# Helper function to create HTTP GET request with browser headers
+make_browser_request <- function(url) {
+  user_agent <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  
+  url %>%
+    httr::GET(
+      config = httr::config(
+        ssl_verifypeer = FALSE,
+        followlocation = TRUE
+      ),
+      httr::user_agent(user_agent),
+      httr::add_headers(
+        "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language" = "en-US,en;q=0.9",
+        "Accept-Encoding" = "gzip, deflate, br",
+        "DNT" = "1",
+        "Connection" = "keep-alive",
+        "Upgrade-Insecure-Requests" = "1",
+        "Sec-Fetch-Dest" = "document",
+        "Sec-Fetch-Mode" = "navigate",
+        "Sec-Fetch-Site" = "none",
+        "Sec-Fetch-User" = "?1",
+        "Cache-Control" = "max-age=0"
+      )
+    )
+}
+
+# Helper function to format numbers as "X.Xk" (e.g., 9400 -> "9.4k")
+format_thousands <- function(number) {
+  if (!is.na(number) && number >= 1000 && number < 1000000) {
+    return(sprintf("%.1fk", number / 1000))
+  }
+  return(NULL)
+}
+
+# Helper function for retry logic with exponential backoff
+retry_with_backoff <- function(scrape_fn, max_retries = 3, service_name = "service") {
+  success <- FALSE
+  result <- NULL
+  
+  # Add initial random delay to avoid predictable patterns (1-3 seconds)
+  initial_delay <- runif(1, 1, 3)
+  message(sprintf("Adding initial delay of %.1f seconds before first %s request...", initial_delay, service_name))
+  Sys.sleep(initial_delay)
+  
+  for (attempt in 1:max_retries) {
+    tryCatch({
+      result <- scrape_fn()
+      
+      if (!is.null(result)) {
+        message(sprintf("Successfully scraped %s: %s", service_name, result))
+        success <- TRUE
+        break
+      }
+    }, error = function(e) {
+      if (attempt < max_retries) {
+        # Calculate delay with exponential backoff: 2^attempt seconds + random jitter
+        base_delay <- 2^attempt
+        jitter <- runif(1, 0, 2)  # Add 0-2 seconds of random jitter
+        delay <- base_delay + jitter
+        message(sprintf("Attempt %d failed: %s. Retrying in %.1f seconds...", attempt, e$message, delay))
+        Sys.sleep(delay)
+      } else {
+        message(sprintf("Warning: Could not scrape %s after %d attempts. Error: %s", service_name, max_retries, e$message))
+      }
+    })
+  }
+  
+  return(result)
+}
+
 # Helper function to extract value from SVG badge file
 extract_value_from_svg <- function(svg_path) {
   # Regex pattern for numeric values with optional decimal and magnitude suffix
@@ -50,6 +121,32 @@ extract_value_from_svg <- function(svg_path) {
   })
 }
 
+# Scrape Google Scholar citations
+scrape_citations <- function() {
+  citations <- gscholar_link %>%
+    make_browser_request() %>%
+    read_html() %>%
+    html_nodes("#gsc_rsb_st") %>%
+    .[[1]] %>%
+    html_table() %>%
+    .[1, "All"]
+  
+  # Validate that we got citations data
+  if (is.null(citations) || is.na(citations) || citations == "") {
+    stop("No citations data retrieved")
+  }
+  
+  # Format citations for badge (e.g., 9400 -> "9.4k")
+  citations_num <- as.numeric(gsub(",", "", citations))
+  formatted <- format_thousands(citations_num)
+  
+  if (is.null(formatted)) {
+    stop("Invalid citations number: ", citations_num)
+  }
+  
+  return(formatted)
+}
+
 # Default to value from existing SVG, or fallback to hardcoded value
 citations_formatted <- extract_value_from_svg("imgs/citations.svg")
 if (is.null(citations_formatted)) {
@@ -59,77 +156,48 @@ if (is.null(citations_formatted)) {
   message("Using value from existing SVG for citations: ", citations_formatted)
 }
 
-# Retry logic with exponential backoff and random jitter
-max_retries <- 5
-success <- FALSE
-
-# Add initial random delay to avoid predictable patterns (1-3 seconds)
-initial_delay <- runif(1, 1, 3)
-message(sprintf("Adding initial delay of %.1f seconds before first request...", initial_delay))
-Sys.sleep(initial_delay)
-
-for (attempt in 1:max_retries) {
-  tryCatch({
-    # Add comprehensive browser headers to appear more like a real browser
-    user_agent <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    
-    citations <- gscholar_link %>%
-      httr::GET(
-        config = httr::config(
-          ssl_verifypeer = FALSE,
-          followlocation = TRUE
-        ),
-        httr::user_agent(user_agent),
-        httr::add_headers(
-          "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-          "Accept-Language" = "en-US,en;q=0.9",
-          "Accept-Encoding" = "gzip, deflate, br",
-          "DNT" = "1",
-          "Connection" = "keep-alive",
-          "Upgrade-Insecure-Requests" = "1",
-          "Sec-Fetch-Dest" = "document",
-          "Sec-Fetch-Mode" = "navigate",
-          "Sec-Fetch-Site" = "none",
-          "Sec-Fetch-User" = "?1",
-          "Cache-Control" = "max-age=0"
-        )
-      ) %>%
-      read_html() %>%
-      html_nodes("#gsc_rsb_st") %>%
-      .[[1]] %>%
-      html_table() %>%
-      .[1, "All"]
-    
-    # Validate that we got citations data
-    if (is.null(citations) || is.na(citations) || citations == "") {
-      stop("No citations data retrieved")
-    }
-    
-    # Format citations for badge (e.g., 9400 -> "9.4k")
-    citations_num <- as.numeric(gsub(",", "", citations))
-    
-    # Only format if we got a valid number in the thousands range
-    if (!is.na(citations_num) && citations_num >= 1000 && citations_num < 1000000) {
-      citations_formatted <- sprintf("%.1fk", citations_num / 1000)
-      message("Successfully scraped citations: ", citations_formatted)
-      success <- TRUE
-      break  # Success, exit the retry loop
-    }
-  }, error = function(e) {
-    if (attempt < max_retries) {
-      # Calculate delay with exponential backoff: 2^attempt seconds + random jitter
-      base_delay <- 2^attempt
-      jitter <- runif(1, 0, 2)  # Add 0-2 seconds of random jitter
-      delay <- base_delay + jitter
-      message(sprintf("Attempt %d failed: %s. Retrying in %.1f seconds...", attempt, e$message, delay))
-      Sys.sleep(delay)
-    } else {
-      message("Warning: Could not scrape citations after ", max_retries, " attempts. Using default value. Error: ", e$message)
-    }
-  })
+# Try to scrape citations with retry logic
+scraped_citations <- retry_with_backoff(scrape_citations, max_retries = 5, service_name = "citations")
+if (!is.null(scraped_citations)) {
+  citations_formatted <- scraped_citations
 }
 
-# Scrape Substack followers dynamically
+# Scrape Substack followers
+scrape_substack <- function() {
+  substack_link <- "https://substack.com/@terrytangyuan"
+  
+  substack_page <- substack_link %>%
+    make_browser_request() %>%
+    read_html()
+  
+  # Try to extract subscriber/follower count from the page
+  # Look for patterns like "1,200 subscribers" or similar
+  page_text <- substack_page %>% html_text()
+  
+  # Try various patterns to find subscriber count
+  subscriber_match <- regexpr("([0-9,]+)\\s+(subscriber|follower)s?", page_text, ignore.case = TRUE, perl = TRUE)
+  
+  if (subscriber_match[[1]] > 0) {
+    matched_text <- regmatches(page_text, subscriber_match)
+    
+    # Extract just the number with proper error handling
+    if (length(matched_text) > 0) {
+      number_match <- regmatches(matched_text, regexpr("[0-9,]+", matched_text))
+      
+      if (length(number_match) > 0 && length(number_match[[1]]) > 0) {
+        subscriber_num <- as.numeric(gsub(",", "", number_match[[1]]))
+        formatted <- format_thousands(subscriber_num)
+        
+        if (!is.null(formatted)) {
+          return(formatted)
+        }
+      }
+    }
+  }
+  
+  stop("Could not find subscriber count in Substack page")
+}
+
 # Default to value from existing SVG, or fallback to hardcoded value
 substack_formatted <- extract_value_from_svg("imgs/substack.svg")
 if (is.null(substack_formatted)) {
@@ -139,87 +207,10 @@ if (is.null(substack_formatted)) {
   message("Using value from existing SVG for Substack: ", substack_formatted)
 }
 
-# Retry logic with exponential backoff and random jitter
-max_retries_substack <- 3
-success_substack <- FALSE
-
-for (attempt in 1:max_retries_substack) {
-  tryCatch({
-    substack_link <- "https://substack.com/@terrytangyuan"
-    
-    # Add random delay to avoid rate limiting (1-3 seconds)
-    initial_delay <- runif(1, 1, 3)
-    message(sprintf("Adding initial delay of %.1f seconds before Substack request (attempt %d/%d)...", initial_delay, attempt, max_retries_substack))
-    Sys.sleep(initial_delay)
-    
-    user_agent <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    
-    substack_page <- substack_link %>%
-      httr::GET(
-        config = httr::config(
-          ssl_verifypeer = FALSE,
-          followlocation = TRUE
-        ),
-        httr::user_agent(user_agent),
-        httr::add_headers(
-          "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-          "Accept-Language" = "en-US,en;q=0.9",
-          "Accept-Encoding" = "gzip, deflate, br",
-          "DNT" = "1",
-          "Connection" = "keep-alive",
-          "Upgrade-Insecure-Requests" = "1",
-          "Sec-Fetch-Dest" = "document",
-          "Sec-Fetch-Mode" = "navigate",
-          "Sec-Fetch-Site" = "none",
-          "Sec-Fetch-User" = "?1",
-          "Cache-Control" = "max-age=0"
-        )
-      ) %>%
-      read_html()
-    
-    # Try to extract subscriber/follower count from the page
-    # Look for patterns like "1,200 subscribers" or similar
-    page_text <- substack_page %>% html_text()
-    
-    # Try various patterns to find subscriber count
-    subscriber_match <- regexpr("([0-9,]+)\\s+(subscriber|follower)s?", page_text, ignore.case = TRUE, perl = TRUE)
-    
-    if (subscriber_match[[1]] > 0) {
-      matched_text <- regmatches(page_text, subscriber_match)
-      
-      # Extract just the number with proper error handling
-      if (length(matched_text) > 0) {
-        number_match <- regmatches(matched_text, regexpr("[0-9,]+", matched_text))
-        
-        if (length(number_match) > 0 && length(number_match[[1]]) > 0) {
-          subscriber_num <- as.numeric(gsub(",", "", number_match[[1]]))
-          
-          # Validate that we got subscriber data
-          if (!is.na(subscriber_num) && subscriber_num >= 1000 && subscriber_num < 1000000) {
-            substack_formatted <- sprintf("%.1fk", subscriber_num / 1000)
-            message("Successfully scraped Substack followers: ", substack_formatted)
-            success_substack <- TRUE
-            break  # Success, exit the retry loop
-          }
-        }
-      }
-    }
-    
-    if (!success_substack) {
-      message("Warning: Could not find subscriber count in Substack page.")
-    }
-  }, error = function(e) {
-    if (attempt < max_retries_substack) {
-      # Calculate delay with exponential backoff: 2^attempt seconds + random jitter
-      base_delay <- 2^attempt
-      jitter <- runif(1, 0, 2)  # Add 0-2 seconds of random jitter
-      delay <- base_delay + jitter
-      message(sprintf("Attempt %d failed: %s. Retrying in %.1f seconds...", attempt, e$message, delay))
-      Sys.sleep(delay)
-    } else {
-      message("Warning: Could not scrape Substack followers after ", max_retries_substack, " attempts. Using default value: ", substack_formatted, ". Error: ", e$message)
-    }
-  })
+# Try to scrape Substack with retry logic
+scraped_substack <- retry_with_backoff(scrape_substack, max_retries = 3, service_name = "Substack followers")
+if (!is.null(scraped_substack)) {
+  substack_formatted <- scraped_substack
 }
 
 # Download all images (except for total followers) in advance so we don't rely on img.shields.io at rendering time.
