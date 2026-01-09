@@ -50,7 +50,6 @@ format_thousands <- function(number) {
 
 # Helper function for retry logic with exponential backoff
 retry_with_backoff <- function(scrape_fn, max_retries = 3, service_name = "service") {
-  success <- FALSE
   result <- NULL
   
   # Add initial random delay to avoid predictable patterns (1-3 seconds)
@@ -64,7 +63,6 @@ retry_with_backoff <- function(scrape_fn, max_retries = 3, service_name = "servi
       
       if (!is.null(result)) {
         message(sprintf("Successfully scraped %s: %s", service_name, result))
-        success <- TRUE
         break
       }
     }, error = function(e) {
@@ -141,7 +139,7 @@ scrape_citations <- function() {
   formatted <- format_thousands(citations_num)
   
   if (is.null(formatted)) {
-    stop("Invalid citations number: ", citations_num)
+    stop("Invalid citations number (must be between 1,000 and 1,000,000): ", citations_num)
   }
   
   return(formatted)
