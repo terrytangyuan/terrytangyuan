@@ -5,7 +5,7 @@ library(httr)
 gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 
 # These fallback values will be used when they cannot be extracted from existing SVG files or scraped from websites
-total_followers_fallback <- "52.8k"
+total_followers_fallback <- "53.4k"
 substack_formatted_fallback <- "1.2k"
 citations_formatted_fallback <- "9.4k"
 
@@ -155,7 +155,7 @@ if (is.null(citations_formatted)) {
 }
 
 # Try to scrape citations with retry logic
-scraped_citations <- retry_with_backoff(scrape_citations, max_retries = 5, service_name = "citations")
+scraped_citations <- retry_with_backoff(scrape_citations, service_name = "citations")
 if (!is.null(scraped_citations)) {
   citations_formatted <- scraped_citations
 }
@@ -206,7 +206,7 @@ if (is.null(substack_formatted)) {
 }
 
 # Try to scrape Substack with retry logic
-scraped_substack <- retry_with_backoff(scrape_substack, max_retries = 3, service_name = "Substack followers")
+scraped_substack <- retry_with_backoff(scrape_substack, service_name = "Substack followers")
 if (!is.null(scraped_substack)) {
   substack_formatted <- scraped_substack
 }
