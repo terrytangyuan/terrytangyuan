@@ -11,7 +11,7 @@ citations_formatted_fallback <- "9.4k"
 
 # Numbers for X and LinkedIn need to be updated manually
 twitter_followers <- "9.9k"
-linkedin_followers <- "21.9k"
+linkedin_followers <- "22k"
 
 # Helper function to create HTTP GET request with browser headers
 make_browser_request <- function(url) {
