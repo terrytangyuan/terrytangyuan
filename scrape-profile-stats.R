@@ -7,7 +7,7 @@ gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 # These fallback values will be used when they cannot be extracted from existing SVG files or scraped from websites
 total_followers_fallback <- "53.9k"
 substack_formatted_fallback <- "1.4k"
-citations_formatted_fallback <- "9.7k"
+citations_formatted_fallback <- "12.3k"
 
 # Numbers for X and LinkedIn need to be updated manually
 twitter_followers <- "9.9k"
