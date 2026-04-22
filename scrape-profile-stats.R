@@ -10,7 +10,7 @@ substack_formatted_fallback <- "1.4k"
 citations_formatted_fallback <- "12.3k"
 
 # Numbers for X and LinkedIn need to be updated manually
-twitter_followers <- "9.9k"
+twitter_followers <- "10k"
 linkedin_followers <- "23k"
 
 # Helper function to create HTTP GET request with browser headers
