@@ -30,21 +30,13 @@ jobs:
         BLUESKY_APP_HANDLE: ${{ secrets.BLUESKY_APP_HANDLE }}
         BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
 
-    - name: Cache R packages
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.R_LIBS_USER }}
-        key: ${{ runner.os }}-r-1-${{ hashFiles('.github/workflows/build.yml') }}
-        restore-keys: ${{ runner.os }}-r-1-
-
     - name: Install system dependencies
       run: |
         sudo apt-get install libcurl4-openssl-dev
 
     - name: Install R package dependencies
       run: |
-        if (!require('rvest')) install.packages('rvest')
-        if (!require('stringi')) install.packages('stringi')
+        install.packages(c('httr', 'rvest', 'stringi'))
       shell: Rscript {0}
 
     - name: Fetch stats and update README.md
