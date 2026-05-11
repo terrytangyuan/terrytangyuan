@@ -82,6 +82,72 @@ retry_with_backoff <- function(scrape_fn, max_retries = 3, service_name = "servi
   return(result)
 }
 
+# Helper function to parse formatted numbers like "12.3k" or "1.4k" to numeric
+parse_formatted_number <- function(formatted) {
+  if (is.null(formatted) || is.na(formatted) || formatted == "") {
+    return(NULL)
+  }
+  tryCatch({
+    if (grepl("[kK]$", formatted)) {
+      return(as.numeric(sub("[kK]$", "", formatted)) * 1000)
+    }
+    if (grepl("[mM]$", formatted)) {
+      return(as.numeric(sub("[mM]$", "", formatted)) * 1000000)
+    }
+    return(as.numeric(formatted))
+  }, error = function(e) {
+    return(NULL)
+  })
+}
+
+# Helper function to update a hardcoded fallback variable in this script.
+# The path is intentionally hardcoded because this script is always executed
+# from the repository root in CI, and rstudioapi is unavailable non-interactively.
+update_hardcoded_value <- function(var_name, new_value) {
+  script_path <- "scrape-profile-stats.R"
+  tryCatch({
+    lines <- readLines(script_path, warn = FALSE)
+    # Allow optional spaces around the assignment operator and handle both quote styles
+    pattern <- sprintf('^%s\\s*<-\\s*["\'].*["\']', var_name)
+    idx <- grep(pattern, lines)
+    if (length(idx) > 0) {
+      lines[idx] <- sprintf('%s <- "%s"', var_name, new_value)
+      writeLines(lines, script_path)
+      message(sprintf("Updated hardcoded %s to %s in script", var_name, new_value))
+    }
+  }, error = function(e) {
+    message(sprintf("Warning: Could not update %s in script: %s", var_name, e$message))
+  })
+}
+
+# Helper function to pick the larger of the SVG value and the hardcoded fallback,
+# update the hardcoded value in the script if the SVG value is larger, and return
+# the larger value to use as the working fallback.
+get_max_fallback <- function(svg_value, hardcoded_value, var_name, label) {
+  svg_num <- parse_formatted_number(svg_value)
+  hardcoded_num <- parse_formatted_number(hardcoded_value)
+
+  if (!is.null(svg_num) && !is.null(hardcoded_num)) {
+    if (svg_num > hardcoded_num) {
+      message(sprintf("SVG value (%s) is larger than hardcoded value (%s) for %s. Using SVG value and updating script.", svg_value, hardcoded_value, label))
+      update_hardcoded_value(var_name, svg_value)
+      return(svg_value)
+    } else {
+      message(sprintf("Hardcoded value (%s) >= SVG value (%s) for %s. Using hardcoded value.", hardcoded_value, svg_value, label))
+      return(hardcoded_value)
+    }
+  } else if (!is.null(svg_num)) {
+    message(sprintf("No valid hardcoded value for %s; using SVG value (%s) and updating script.", label, svg_value))
+    update_hardcoded_value(var_name, svg_value)
+    return(svg_value)
+  } else if (!is.null(hardcoded_num)) {
+    message(sprintf("No valid SVG value for %s; using hardcoded value (%s).", label, hardcoded_value))
+    return(hardcoded_value)
+  } else {
+    stop(sprintf("No valid fallback available for %s (both SVG and hardcoded values are missing or unparseable).", label))
+  }
+}
+
 # Helper function to extract value from SVG badge file
 extract_value_from_svg <- function(svg_path) {
   # Regex pattern for numeric values with optional decimal and magnitude suffix
@@ -145,14 +211,13 @@ scrape_citations <- function() {
   return(formatted)
 }
 
-# Default to value from existing SVG, or fallback to hardcoded value
-citations_formatted <- extract_value_from_svg("imgs/citations.svg")
-if (is.null(citations_formatted)) {
-  citations_formatted <- citations_formatted_fallback
-  message("Using hardcoded default for citations: ", citations_formatted)
-} else {
-  message("Using value from existing SVG for citations: ", citations_formatted)
-}
+# Default to the larger of the SVG value and the hardcoded fallback for citations
+citations_formatted <- get_max_fallback(
+  extract_value_from_svg("imgs/citations.svg"),
+  citations_formatted_fallback,
+  "citations_formatted_fallback",
+  "citations"
+)
 
 # Try to scrape citations with retry logic
 scraped_citations <- retry_with_backoff(scrape_citations, service_name = "citations")
@@ -196,14 +261,13 @@ scrape_substack <- function() {
   stop("Could not find subscriber count in Substack page")
 }
 
-# Default to value from existing SVG, or fallback to hardcoded value
-substack_formatted <- extract_value_from_svg("imgs/substack.svg")
-if (is.null(substack_formatted)) {
-  substack_formatted <- substack_formatted_fallback
-  message("Using hardcoded default for Substack: ", substack_formatted)
-} else {
-  message("Using value from existing SVG for Substack: ", substack_formatted)
-}
+# Default to the larger of the SVG value and the hardcoded fallback for Substack
+substack_formatted <- get_max_fallback(
+  extract_value_from_svg("imgs/substack.svg"),
+  substack_formatted_fallback,
+  "substack_formatted_fallback",
+  "Substack"
+)
 
 # Try to scrape Substack with retry logic
 scraped_substack <- retry_with_backoff(scrape_substack, service_name = "Substack followers")
@@ -227,14 +291,13 @@ for (i in 1:length(imgs)) {
 }
 
 # Calculate total followers by running the Python script
-# Default to value from existing SVG, or fallback to hardcoded value
-total_followers <- extract_value_from_svg("imgs/followers.svg")
-if (is.null(total_followers)) {
-  total_followers <- total_followers_fallback
-  message("Using hardcoded default for total followers: ", total_followers)
-} else {
-  message("Using value from existing SVG for total followers: ", total_followers)
-}
+# Default to the larger of the SVG value and the hardcoded fallback for total followers
+total_followers <- get_max_fallback(
+  extract_value_from_svg("imgs/followers.svg"),
+  total_followers_fallback,
+  "total_followers_fallback",
+  "total followers"
+)
 
 tryCatch({
   total_followers_result <- system("python3 calculate_total_followers.py", intern = TRUE)
