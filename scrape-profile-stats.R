@@ -5,7 +5,7 @@ library(httr)
 gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 
 # These fallback values will be used when they cannot be extracted from existing SVG files or scraped from websites
-total_followers_fallback <- "57k"
+total_followers_fallback <- "57.6k"
 substack_formatted_fallback <- "1.6k"
 citations_formatted_fallback <- "13.1k"
 
