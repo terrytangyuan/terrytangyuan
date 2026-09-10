@@ -7,11 +7,11 @@ gscholar_link <- "https://scholar.google.com/citations?user=2GYttqUAAAAJ&hl=en"
 # These fallback values will be used when they cannot be extracted from existing SVG files or scraped from websites
 total_followers_fallback <- "59.1k"
 substack_formatted_fallback <- "1.6k"
-citations_formatted_fallback <- "10.8k"
+citations_formatted_fallback <- "10.9k"
 
 # Numbers for X and LinkedIn need to be updated manually
 twitter_followers <- "10.1k"
-linkedin_followers <- "26.7k"
+linkedin_followers <- "27.1k"
 
 # Helper function to create HTTP GET request with browser headers
 make_browser_request <- function(url) {
